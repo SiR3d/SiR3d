@@ -112,6 +112,7 @@
                 const response = await fetch('products.json');
                 const products = await response.json();
                 loadProducts(products);
+                openModalFromHash(products);
             } catch (error) {
                 console.error("Error loading products:", error);
             }
@@ -187,6 +188,18 @@
                 }
             });
         };
+
+        // Function to open the modal based on the URL hash
+        function openModalFromHash(products) {
+            const hash = window.location.hash; // Get the hash from the URL
+            if (hash) {
+                const productId = hash.replace('#product', ''); // Extract product ID from the hash
+                const product = products.find(p => p.id == productId); // Find the product by ID
+                if (product) {
+                    openModal(product.id); // Open the corresponding modal
+                }
+            }
+        }
 
         // Load the product data from the JSON file when the page is loaded
         window.onload = loadProductData;
