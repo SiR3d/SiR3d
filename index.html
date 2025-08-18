@@ -112,7 +112,7 @@
                 const response = await fetch('products.json');
                 const products = await response.json();
                 loadProducts(products);
-                openModalFromHash(products);
+                openModalFromHash(products); // Open modal if hash is in the URL
             } catch (error) {
                 console.error("Error loading products:", error);
             }
@@ -193,13 +193,25 @@
         function openModalFromHash(products) {
             const hash = window.location.hash; // Get the hash from the URL
             if (hash) {
-                const productId = hash.replace('#product', ''); // Extract product ID from the hash
+                const productId = hash.replace('#', ''); // Extract product ID from the hash
                 const product = products.find(p => p.id == productId); // Find the product by ID
                 if (product) {
                     openModal(product.id); // Open the corresponding modal
                 }
             }
         }
+
+        // Add event listener for hash changes (to allow modal opening with hash changes)
+        window.addEventListener("hashchange", function() {
+            const hash = window.location.hash;
+            if (hash) {
+                const productId = hash.replace('#', '');
+                const modal = document.getElementById(`product${productId}-modal`);
+                if (modal) {
+                    modal.style.display = 'block'; // Show modal when hash changes
+                }
+            }
+        });
 
         // Load the product data from the JSON file when the page is loaded
         window.onload = loadProductData;
