@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name - Product Showcase</title>
+    <title>Product Showcase</title>
     <style>
-        /* Your existing styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
             margin: 0;
             padding: 0;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
         }
         .product-container {
             display: flex;
@@ -35,6 +28,7 @@
             text-align: center;
             padding: 20px;
             transition: transform 0.2s;
+            cursor: pointer;
         }
         .product:hover {
             transform: scale(1.05);
@@ -52,75 +46,140 @@
             color: #888;
             margin: 10px 0;
         }
-        .product .price {
+        .price {
             font-size: 20px;
             font-weight: bold;
             color: #27ae60;
         }
-        .product-details {
-            padding: 20px;
-            background-color: #fff;
-            margin-top: 20px;
-            display: none;
+
+        /* Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
         }
-        .product-details img {
-            max-width: 100%;
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
             border-radius: 8px;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="img/logo.png" alt="Logo">
-        <h1>Your Name - Product Showcase</h1>
+        <h1 style="text-align: center; padding: 20px;">Product Showcase</h1>
     </header>
 
     <div class="product-container" id="product-container">
-        <!-- Products will be injected here by JavaScript -->
+        <!-- Products will be dynamically injected here -->
     </div>
 
-    <div id="product1-details" class="product-details">
-        <h2>Product 1</h2>
-        <img src="img/product1.jpg" alt="Product 1">
-        <p>This is a detailed description of Product 1. You can add more information here like features, specifications, and reviews.</p>
-        <p class="price">$19.99</p>
-        <a href="#product-container">Back to Product List</a>
-    </div>
-
-    <div id="product2-details" class="product-details">
-        <h2>Product 2</h2>
-        <img src="img/product2.jpg" alt="Product 2">
-        <p>This is a detailed description of Product 2. You can add more information here like features, specifications, and reviews.</p>
-        <p class="price">$29.99</p>
-        <a href="#product-container">Back to Product List</a>
+    <!-- Modal for Product Details -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2 id="modal-title">Product Title</h2>
+            <img id="modal-image" src="" alt="Product Image" style="max-width: 100%; border-radius: 8px;">
+            <p id="modal-description">Product Description</p>
+            <p id="modal-price" class="price">Price</p>
+        </div>
     </div>
 
     <script>
-        // Fetch product data from products.json file
-        fetch('products.json')
-            .then(response => response.json())
-            .then(data => {
-                const productContainer = document.getElementById('product-container');
-                
-                // Loop through the products and create HTML for each
-                data.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.classList.add('product');
-                    
-                    productCard.innerHTML = `
-                        <a href="#product${product.id}-details"> <!-- Hash link to navigate to the product's detail section -->
-                            <img src="${product.image}" alt="${product.name}">
-                            <h3>${product.name}</h3>
-                            <p>${product.description}</p>
-                            <p class="price">${product.price}</p>
-                        </a>
-                    `;
-                    
-                    productContainer.appendChild(productCard);
-                });
-            })
-            .catch(error => console.error('Error loading product data:', error));
+        // Sample products data (this can come from a JSON file or API)
+        const products = [
+            {
+                "id": 1,
+                "name": "Product 1",
+                "description": "This is the description for Product 1.",
+                "price": "$19.99",
+                "image": "https://via.placeholder.com/250"
+            },
+            {
+                "id": 2,
+                "name": "Product 2",
+                "description": "This is the description for Product 2.",
+                "price": "$29.99",
+                "image": "https://via.placeholder.com/250"
+            },
+            {
+                "id": 3,
+                "name": "Product 3",
+                "description": "This is the description for Product 3.",
+                "price": "$39.99",
+                "image": "https://via.placeholder.com/250"
+            }
+        ];
+
+        // Function to create product cards and add event listeners
+        function loadProducts() {
+            const container = document.getElementById('product-container');
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product');
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p class="price">${product.price}</p>
+                `;
+                productCard.addEventListener('click', () => openModal(product));
+                container.appendChild(productCard);
+            });
+        }
+
+        // Function to open the modal with product details
+        function openModal(product) {
+            document.getElementById('modal-title').innerText = product.name;
+            document.getElementById('modal-image').src = product.image;
+            document.getElementById('modal-description').innerText = product.description;
+            document.getElementById('modal-price').innerText = product.price;
+
+            // Display the modal
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        // Close the modal when the user clicks on the close button
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('productModal').style.display = 'none';
+        });
+
+        // Close the modal if the user clicks outside of the modal content
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productModal')) {
+                document.getElementById('productModal').style.display = 'none';
+            }
+        }
+
+        // Load products when the page loads
+        window.onload = loadProducts;
     </script>
 
 </body>
