@@ -17,4 +17,10 @@
         "price": "$39.99",
         "image": "img/product3.jpg"
     }
+        {
+        "name": "Rias 3",
+        "description": "A brief description of Product 3.",
+        "price": "$39.99",
+        "image": "img/product3.jpg"
+    }
 ]
