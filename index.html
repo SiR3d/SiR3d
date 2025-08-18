@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Showcase</title>
     <style>
-        /* General Styles (unchanged) */
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -99,35 +99,31 @@
     </header>
 
     <div class="product-container" id="product-container">
-        <!-- Products will be dynamically injected here -->
+        <!-- Product cards will be dynamically injected here -->
     </div>
 
-    <!-- Modal for Product Details -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeModal">&times;</span>
-            <h2 id="modal-title">Product Title</h2>
-            <img id="modal-image" src="" alt="Product Image" style="max-width: 100%; border-radius: 8px;">
-            <p id="modal-description">Product Description</p>
-            <p id="modal-price" class="price">Price</p>
-        </div>
-    </div>
+    <!-- Modals container will hold dynamically generated modals -->
+    <div id="modals-container"></div>
 
     <script>
-        // Fetching product data from products.json
-        fetch('products.json')
-            .then(response => response.json())
-            .then(data => {
-                loadProducts(data);
-            })
-            .catch(error => {
-                console.error('Error loading products:', error);
-            });
+        // Function to fetch the JSON file containing product data
+        async function loadProductData() {
+            try {
+                const response = await fetch('products.json');
+                const products = await response.json();
+                loadProducts(products);
+            } catch (error) {
+                console.error("Error loading products:", error);
+            }
+        }
 
-        // Function to dynamically generate product cards
+        // Function to dynamically generate product cards and modals
         function loadProducts(products) {
             const container = document.getElementById('product-container');
+            const modalsContainer = document.getElementById('modals-container');
+            
             products.forEach(product => {
+                // Create the product card
                 const productCard = document.createElement('div');
                 productCard.classList.add('product');
                 productCard.innerHTML = `
@@ -136,34 +132,64 @@
                     <p>${product.description}</p>
                     <p class="price">${product.price}</p>
                 `;
-                // Adding event listener to open modal with product details
-                productCard.addEventListener('click', () => openModal(product));
+                // Add click event listener to open modal
+                productCard.addEventListener('click', () => openModal(product.id));
+
+                // Add the product card to the container
                 container.appendChild(productCard);
+
+                // Create the modal for this product
+                const modal = document.createElement('div');
+                modal.classList.add('modal');
+                modal.id = `product${product.id}-modal`; // Dynamic modal ID
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close-btn" data-modal="product${product.id}-modal">&times;</span>
+                        <h2 id="product${product.id}-title">${product.name}</h2>
+                        <img id="product${product.id}-image" src="${product.image}" alt="${product.name}" style="max-width: 100%; border-radius: 8px;">
+                        <p id="product${product.id}-description">${product.description}</p>
+                        <p id="product${product.id}-price" class="price">${product.price}</p>
+                    </div>
+                `;
+                // Add the modal to the modals container
+                modalsContainer.appendChild(modal);
             });
         }
 
         // Function to open the modal with product details
-        function openModal(product) {
-            document.getElementById('modal-title').innerText = product.name;
-            document.getElementById('modal-image').src = product.image;
-            document.getElementById('modal-description').innerText = product.description;
-            document.getElementById('modal-price').innerText = product.price;
+        function openModal(productId) {
+            const modalId = `product${productId}-modal`;
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'block';
+        }
 
-            // Display the modal
-            document.getElementById('productModal').style.display = 'block';
+        // Function to close the modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'none';
         }
 
         // Close the modal when the user clicks on the close button
-        document.getElementById('closeModal').addEventListener('click', () => {
-            document.getElementById('productModal').style.display = 'none';
+        const closeButtons = document.querySelectorAll('.close-btn');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const modalId = event.target.getAttribute('data-modal');
+                closeModal(modalId);
+            });
         });
 
         // Close the modal if the user clicks outside of the modal content
         window.onclick = function(event) {
-            if (event.target == document.getElementById('productModal')) {
-                document.getElementById('productModal').style.display = 'none';
-            }
-        }
+            const modalIds = document.querySelectorAll('.modal');
+            modalIds.forEach(modal => {
+                if (event.target == modal) {
+                    closeModal(modal.id);
+                }
+            });
+        };
+
+        // Load the product data from the JSON file when the page is loaded
+        window.onload = loadProductData;
     </script>
 
 </body>
