@@ -26,5 +26,12 @@
         "description": "This is a detailed description of Product 4.",
         "price": "$39.99",
         "image": "img/product4.jpg"
+    },
+    {
+        "id": 5,
+        "name": "Rias 5",
+        "description": "This is a detailed description of Product 5.",
+        "price": "$129.99",
+        "image": "img/product4.jpg"
     }
 ]
