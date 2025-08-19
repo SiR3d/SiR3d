@@ -128,6 +128,22 @@
             galleryHTML += `<img src="${img}" alt="${product.name}">`;
           });
         }
+        product.videoLinks.forEach(link => {
+          if (link.type === "mp4") {
+            galleryHTML += `<video controls>
+                          <source src="${link.url}" type="video/mp4">
+                        </video>`;
+        }
+        if (link.type === "youtube") {
+          galleryHTML += `<iframe width="100%" height="315"
+                          src="https://www.youtube.com/embed/${link.id}"
+                          frameborder="0" allowfullscreen></iframe>`;
+        }
+        if (link.type === "gdrive") {
+          galleryHTML += `<iframe src="https://drive.google.com/file/d/${link.id}/preview"
+                          width="640" height="480" allow="autoplay"></iframe>`;
+        }
+      });
         if (product.video) {
           galleryHTML += `<video controls>
                             <source src="${product.video}" type="video/mp4">
