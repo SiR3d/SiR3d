@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f4f4f4, #eaf7ff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #177AC2, #0D5F9E);
+      color: white;
+      padding: 15px 30px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .product-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product-gallery {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .product-gallery img, .product-gallery video {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .product-info {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .product-info h1 {
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .product-info p {
+      font-size: 16px;
+      color: #555;
+      margin: 10px 0;
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: bold;
+      color: #27ae60;
+      margin: 15px 0;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      background: #177AC2;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .back-link:hover {
+      background: #0D5F9E;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    Product Details
+  </header>
+
+  <div class="container" id="product-container">
+    <!-- Product details will be injected here -->
+  </div>
+
+  <script>
+    // Get query parameter by name
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function loadProduct() {
+      const productId = getQueryParam("id");
+      if (!productId) {
+        document.getElementById("product-container").innerHTML = "<p>No product selected.</p>";
+        return;
+      }
+
+      try {
+        const response = await fetch("products.json");
+        const products = await response.json();
+        const product = products.find(p => p.id == productId);
+
+        if (!product) {
+          document.getElementById("product-container").innerHTML = "<p>Product not found.</p>";
+          return;
+        }
+
+        // Build gallery (images + optional video if provided)
+        let galleryHTML = `<img src="${product.image}" alt="${product.name}">`;
+        if (product.images && product.images.length > 0) {
+          product.images.forEach(img => {
+            galleryHTML += `<img src="${img}" alt="${product.name}">`;
+          });
+        }
+        if (product.video) {
+          galleryHTML += `<video controls>
+                            <source src="${product.video}" type="video/mp4">
+                            Your browser does not support the video tag.
+                          </video>`;
+        }
+
+        // Inject content
+        document.getElementById("product-container").innerHTML = `
+          <div class="product-header">
+            <div class="product-gallery">
+              ${galleryHTML}
+            </div>
+            <div class="product-info">
+              <h1>${product.name}</h1>
+              <p>${product.description}</p>
+              <p class="price">${product.price}</p>
+              <a href="index.html" class="back-link">⬅ Back to Products</a>
+            </div>
+          </div>
+        `;
+      } catch (error) {
+        console.error("Error loading product:", error);
+        document.getElementById("product-container").innerHTML = "<p>Error loading product details.</p>";
+      }
+    }
+
+    window.onload = loadProduct;
+  </script>
+
+</body>
+</html>
