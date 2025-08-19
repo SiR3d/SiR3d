@@ -197,8 +197,7 @@
           <p class="price">${product.price}</p>
         `;
         productCard.addEventListener('click', () => {
-          openModal(product.id);
-          window.location.hash = `product${product.id}`;
+          window.location.href = `product.html?id=${product.id}`;
         });
         container.appendChild(productCard);
 
