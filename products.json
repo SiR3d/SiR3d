@@ -5,7 +5,7 @@
     "description": "This is a detailed description of Product 1.",
     "price": "$19.99",
     "image": "img/product1.jpg",
-    "images": ["img/product1_alt1.jpg", "img/product1_alt2.jpg"],
+    "images": ["img/logo.jpg"],
     "videoLinks": [
       { "type": "mp4", "url": "video/product1.mp4" }
     ]
@@ -16,9 +16,8 @@
     "description": "This is a detailed description of Product 2.",
     "price": "$139.99",
     "image": "img/product2.jpg",
-    "images": ["img/product2_alt1.jpg", "img/product2_alt2.jpg"],
-    "videoLinks": [
-    ]
+    "images": [],
+    "videoLinks": []
   },
   {
     "id": 3,
