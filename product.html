@@ -37,76 +37,61 @@
       gap: 20px;
     }
 
-    /* Slider styles */
-    .gallery-slider {
-      position: relative;
+    .product-gallery {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .main-slider {
       width: 100%;
-      max-width: 600px;
+      border-radius: 12px;
       margin-bottom: 10px;
       overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
     }
 
-    .slides {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-    }
-
-    .slide {
-      min-width: 100%;
-      box-sizing: border-box;
-    }
-
-    .slide img, .slide video, .slide iframe {
+    .main-slider img, .main-slider video, .main-slider iframe {
       width: 100%;
       border-radius: 12px;
     }
 
-    .prev, .next {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 50%;
-      font-size: 20px;
-      z-index: 10;
-    }
-
-    .prev { left: 10px; }
-    .next { right: 10px; }
-
-    /* Thumbnails */
     .thumbnails {
       display: flex;
       gap: 10px;
-      margin-top: 10px;
-      overflow-x: auto;
-      padding-bottom: 5px;
+      flex-wrap: wrap;
     }
 
     .thumbnail {
-      flex: 0 0 auto;
+      position: relative;
       width: 80px;
       height: 60px;
       cursor: pointer;
-      border: 2px solid transparent;
-      border-radius: 8px;
       overflow: hidden;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      flex-shrink: 0;
     }
 
     .thumbnail.active {
       border-color: #177AC2;
     }
 
-    .thumbnail img, .thumbnail video, .thumbnail iframe {
+    .thumbnail img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .thumbnail.video::after {
+      content: "▶";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: white;
+      text-shadow: 0 0 5px rgba(0,0,0,0.7);
+      pointer-events: none;
     }
 
     .product-info {
@@ -114,6 +99,7 @@
       min-width: 250px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
     }
 
     .product-info h1 {
@@ -135,14 +121,15 @@
     }
 
     .back-link {
-      align-self: flex-end;
-      margin-top: auto;
+      display: inline-block;
       text-decoration: none;
       background: #177AC2;
       color: white;
       padding: 10px 20px;
       border-radius: 8px;
       transition: background 0.3s;
+      align-self: flex-end;
+      margin-top: 20px;
     }
 
     .back-link:hover {
@@ -183,57 +170,43 @@
           return;
         }
 
-        // Build slides
-        let slidesHTML = `<div class="slide"><img src="${product.image}" alt="${product.name}"></div>`;
+        // Build slider items
+        let sliderItems = [];
+        if (product.image) sliderItems.push({ type: "image", src: product.image });
         if (product.images) {
-          product.images.forEach(img => {
-            slidesHTML += `<div class="slide"><img src="${img}" alt="${product.name}"></div>`;
-          });
+          product.images.forEach(img => sliderItems.push({ type: "image", src: img }));
         }
-        if (product.video) {
-          slidesHTML += `<div class="slide"><video controls><source src="${product.video}" type="video/mp4"></video></div>`;
-        }
+        if (product.video) sliderItems.push({ type: "video", src: product.video });
         if (product.videoLinks) {
           product.videoLinks.forEach(link => {
-            if (link.type === "mp4") slidesHTML += `<div class="slide"><video controls><source src="${link.url}" type="video/mp4"></video></div>`;
-            if (link.type === "youtube") slidesHTML += `<div class="slide"><iframe width="100%" height="315" src="https://www.youtube.com/embed/${link.id}" frameborder="0" allowfullscreen></iframe></div>`;
-            if (link.type === "gdrive") slidesHTML += `<div class="slide"><iframe src="https://drive.google.com/file/d/${link.id}/preview" width="100%" height="315" allow="autoplay"></iframe></div>`;
+            if (link.type === "mp4") sliderItems.push({ type: "video", src: link.url });
+            if (link.type === "youtube") sliderItems.push({ type: "youtube", id: link.id });
+            if (link.type === "gdrive") sliderItems.push({ type: "gdrive", id: link.id });
           });
         }
 
-        // Build thumbnails (all thumbnails are images, not playable videos)
-        let thumbsHTML = `<div class="thumbnail active" data-index="0"><img src="${product.image}" alt="${product.name}"></div>`;
-        if (product.images) {
-          product.images.forEach((img, idx) => {
-            thumbsHTML += `<div class="thumbnail" data-index="${idx + 1}"><img src="${img}" alt="${product.name}"></div>`;
-          });
-        }
-        let videoIndex = (product.images ? product.images.length + 1 : 1);
-        if (product.video) {
-          // use a poster image or same as main image
-          thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><img src="${product.image}" alt="Video"></div>`;
-          videoIndex++;
-        }
-        if (product.videoLinks) {
-          product.videoLinks.forEach(link => {
-            // just show a placeholder image for videos
-            thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><img src="${product.image}" alt="Video"></div>`;
-            videoIndex++;
-          });
-        }
+        // Build main slider
+        let mainSliderHTML = "";
+        sliderItems.forEach((item, index) => {
+          if (item.type === "image") mainSliderHTML += `<img src="${item.src}" class="slider-item" style="display:${index===0?'block':'none'}">`;
+          if (item.type === "video") mainSliderHTML += `<video controls class="slider-item" style="display:${index===0?'block':'none'}"><source src="${item.src}" type="video/mp4"></video>`;
+          if (item.type === "youtube") mainSliderHTML += `<iframe width="100%" height="400" class="slider-item" style="display:${index===0?'block':'none'}" src="https://www.youtube.com/embed/${item.id}" frameborder="0" allowfullscreen></iframe>`;
+          if (item.type === "gdrive") mainSliderHTML += `<iframe width="100%" height="400" class="slider-item" style="display:${index===0?'block':'none'}" src="https://drive.google.com/file/d/${item.id}/preview" allow="autoplay"></iframe>`;
+        });
 
-        // Inject content
+        // Build thumbnails
+        let thumbsHTML = "";
+        sliderItems.forEach((item, index) => {
+          const isVideo = item.type === "video" || item.type === "youtube" || item.type === "gdrive";
+          const thumbSrc = item.type === "image" ? item.src : (product.image || "img/video_placeholder.jpg");
+          thumbsHTML += `<div class="thumbnail ${isVideo?'video':''}" data-index="${index}"><img src="${thumbSrc}" alt=""></div>`;
+        });
+
         document.getElementById("product-container").innerHTML = `
           <div class="product-header">
-            <div class="gallery-slider">
-              <div class="slides">
-                ${slidesHTML}
-              </div>
-              <button class="prev">&#10094;</button>
-              <button class="next">&#10095;</button>
-              <div class="thumbnails">
-                ${thumbsHTML}
-              </div>
+            <div class="product-gallery">
+              <div class="main-slider">${mainSliderHTML}</div>
+              <div class="thumbnails">${thumbsHTML}</div>
             </div>
             <div class="product-info">
               <h1>${product.name}</h1>
@@ -244,32 +217,20 @@
           </div>
         `;
 
-        // Slider functionality
-        const slidesContainer = document.querySelector(".slides");
-        const thumbnails = document.querySelectorAll(".thumbnail");
-        const totalSlides = slidesContainer.children.length;
-        let currentIndex = 0;
-
-        function showSlide(index) {
-          currentIndex = index;
-          slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
-          thumbnails.forEach(t => t.classList.remove("active"));
-          thumbnails[currentIndex].classList.add("active");
-        }
-
-        document.querySelector(".next").addEventListener("click", () => {
-          showSlide((currentIndex + 1) % totalSlides);
-        });
-
-        document.querySelector(".prev").addEventListener("click", () => {
-          showSlide((currentIndex - 1 + totalSlides) % totalSlides);
-        });
-
-        thumbnails.forEach(thumb => {
+        // Thumbnail click
+        const sliderItemsEls = document.querySelectorAll(".slider-item");
+        const thumbnailEls = document.querySelectorAll(".thumbnail");
+        thumbnailEls.forEach(thumb => {
           thumb.addEventListener("click", () => {
-            showSlide(parseInt(thumb.dataset.index));
+            const idx = thumb.getAttribute("data-index");
+            sliderItemsEls.forEach(item => item.style.display = "none");
+            sliderItemsEls[idx].style.display = "block";
+            thumbnailEls.forEach(t => t.classList.remove("active"));
+            thumb.classList.add("active");
           });
         });
+        // Set first thumbnail active
+        if (thumbnailEls[0]) thumbnailEls[0].classList.add("active");
 
       } catch (error) {
         console.error("Error loading product:", error);
