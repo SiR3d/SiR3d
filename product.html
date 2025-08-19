@@ -42,7 +42,7 @@
       position: relative;
       width: 100%;
       max-width: 600px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       overflow: hidden;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -80,9 +80,40 @@
     .prev { left: 10px; }
     .next { right: 10px; }
 
+    /* Thumbnails */
+    .thumbnails {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .thumbnail {
+      flex: 0 0 auto;
+      width: 80px;
+      height: 60px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .thumbnail.active {
+      border-color: #177AC2;
+    }
+
+    .thumbnail img, .thumbnail video, .thumbnail iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .product-info {
       flex: 1;
       min-width: 250px;
+      display: flex;
+      flex-direction: column;
     }
 
     .product-info h1 {
@@ -104,8 +135,8 @@
     }
 
     .back-link {
-      display: inline-block;
-      margin-top: 20px;
+      align-self: flex-end;
+      margin-top: auto;
       text-decoration: none;
       background: #177AC2;
       color: white;
@@ -152,9 +183,9 @@
           return;
         }
 
-        // Build slides dynamically
+        // Build slides
         let slidesHTML = `<div class="slide"><img src="${product.image}" alt="${product.name}"></div>`;
-        if (product.images && product.images.length > 0) {
+        if (product.images) {
           product.images.forEach(img => {
             slidesHTML += `<div class="slide"><img src="${img}" alt="${product.name}"></div>`;
           });
@@ -162,17 +193,31 @@
         if (product.video) {
           slidesHTML += `<div class="slide"><video controls><source src="${product.video}" type="video/mp4"></video></div>`;
         }
-        if (product.videoLinks && product.videoLinks.length > 0) {
+        if (product.videoLinks) {
           product.videoLinks.forEach(link => {
-            if (link.type === "mp4") {
-              slidesHTML += `<div class="slide"><video controls><source src="${link.url}" type="video/mp4"></video></div>`;
-            }
-            if (link.type === "youtube") {
-              slidesHTML += `<div class="slide"><iframe width="100%" height="315" src="https://www.youtube.com/embed/${link.id}" frameborder="0" allowfullscreen></iframe></div>`;
-            }
-            if (link.type === "gdrive") {
-              slidesHTML += `<div class="slide"><iframe src="https://drive.google.com/file/d/${link.id}/preview" width="100%" height="315" allow="autoplay"></iframe></div>`;
-            }
+            if (link.type === "mp4") slidesHTML += `<div class="slide"><video controls><source src="${link.url}" type="video/mp4"></video></div>`;
+            if (link.type === "youtube") slidesHTML += `<div class="slide"><iframe width="100%" height="315" src="https://www.youtube.com/embed/${link.id}" frameborder="0" allowfullscreen></iframe></div>`;
+            if (link.type === "gdrive") slidesHTML += `<div class="slide"><iframe src="https://drive.google.com/file/d/${link.id}/preview" width="100%" height="315" allow="autoplay"></iframe></div>`;
+          });
+        }
+
+        // Build thumbnails
+        let thumbsHTML = `<div class="thumbnail active" data-index="0"><img src="${product.image}" alt="${product.name}"></div>`;
+        if (product.images) {
+          product.images.forEach((img, idx) => {
+            thumbsHTML += `<div class="thumbnail" data-index="${idx + 1}"><img src="${img}" alt="${product.name}"></div>`;
+          });
+        }
+        let videoIndex = (product.images ? product.images.length + 1 : 1);
+        if (product.video) {
+          thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><video><source src="${product.video}" type="video/mp4"></video></div>`;
+          videoIndex++;
+        }
+        if (product.videoLinks) {
+          product.videoLinks.forEach(link => {
+            if (link.type === "mp4") { thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><video><source src="${link.url}" type="video/mp4"></video></div>`; videoIndex++; }
+            if (link.type === "youtube") { thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><iframe src="https://www.youtube.com/embed/${link.id}"></iframe></div>`; videoIndex++; }
+            if (link.type === "gdrive") { thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><iframe src="https://drive.google.com/file/d/${link.id}/preview"></iframe></div>`; videoIndex++; }
           });
         }
 
@@ -185,6 +230,9 @@
               </div>
               <button class="prev">&#10094;</button>
               <button class="next">&#10095;</button>
+              <div class="thumbnails">
+                ${thumbsHTML}
+              </div>
             </div>
             <div class="product-info">
               <h1>${product.name}</h1>
@@ -197,17 +245,29 @@
 
         // Slider functionality
         const slidesContainer = document.querySelector(".slides");
+        const thumbnails = document.querySelectorAll(".thumbnail");
         const totalSlides = slidesContainer.children.length;
         let currentIndex = 0;
 
-        document.querySelector(".next").addEventListener("click", () => {
-          currentIndex = (currentIndex + 1) % totalSlides;
+        function showSlide(index) {
+          currentIndex = index;
           slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+          thumbnails.forEach(t => t.classList.remove("active"));
+          thumbnails[currentIndex].classList.add("active");
+        }
+
+        document.querySelector(".next").addEventListener("click", () => {
+          showSlide((currentIndex + 1) % totalSlides);
         });
 
         document.querySelector(".prev").addEventListener("click", () => {
-          currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-          slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+          showSlide((currentIndex - 1 + totalSlides) % totalSlides);
+        });
+
+        thumbnails.forEach(thumb => {
+          thumb.addEventListener("click", () => {
+            showSlide(parseInt(thumb.dataset.index));
+          });
         });
 
       } catch (error) {
