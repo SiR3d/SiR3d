@@ -10,9 +10,20 @@
   },
   {
     "id": 2,
-    "name": "Product 2",
-    "description": "This is a detailed description of Product 2.",
-    "price": "$29.99",
-    "image": "img/product2.jpg"
-  }
+    "name": "Product 1",
+    "description": "This is a detailed description of Product 1.",
+    "price": "$139.99",
+    "image": "img/product2.jpg",
+    "images": ["img/product1_alt1.jpg", "img/product1_alt2.jpg"],
+    "video": "video/product1.mp4"
+  },
+  {
+    "id": 3,
+    "name": "Product 1",
+    "description": "This is a detailed description of Product 1.",
+    "price": "$190.99",
+    "image": "img/product3.jpg",
+    "images": ["img/product3.jpg", "img/product4.jpg"],
+    "video": "video/product3.mp4"
+  },
 ]
