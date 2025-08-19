@@ -5,7 +5,7 @@
     "description": "This is a detailed description of Product 1.",
     "price": "$19.99",
     "image": "img/product1.jpg",
-    "images": ["img/logo.jpg"],
+    "images": ["img/logo.png"],
     "videoLinks": [
       { "type": "mp4", "url": "video/product1.mp4" }
     ]
