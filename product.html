@@ -201,7 +201,7 @@
           });
         }
 
-        // Build thumbnails
+        // Build thumbnails (all thumbnails are images, not playable videos)
         let thumbsHTML = `<div class="thumbnail active" data-index="0"><img src="${product.image}" alt="${product.name}"></div>`;
         if (product.images) {
           product.images.forEach((img, idx) => {
@@ -210,14 +210,15 @@
         }
         let videoIndex = (product.images ? product.images.length + 1 : 1);
         if (product.video) {
-          thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><video><source src="${product.video}" type="video/mp4"></video></div>`;
+          // use a poster image or same as main image
+          thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><img src="${product.image}" alt="Video"></div>`;
           videoIndex++;
         }
         if (product.videoLinks) {
           product.videoLinks.forEach(link => {
-            if (link.type === "mp4") { thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><video><source src="${link.url}" type="video/mp4"></video></div>`; videoIndex++; }
-            if (link.type === "youtube") { thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><iframe src="https://www.youtube.com/embed/${link.id}"></iframe></div>`; videoIndex++; }
-            if (link.type === "gdrive") { thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><iframe src="https://drive.google.com/file/d/${link.id}/preview"></iframe></div>`; videoIndex++; }
+            // just show a placeholder image for videos
+            thumbsHTML += `<div class="thumbnail" data-index="${videoIndex}"><img src="${product.image}" alt="Video"></div>`;
+            videoIndex++;
           });
         }
 
