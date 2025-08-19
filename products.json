@@ -24,6 +24,10 @@
     "price": "$190.99",
     "image": "img/product3.jpg",
     "images": ["img/product3.jpg", "img/product4.jpg"],
-    "video": "https://www.youtube.com/watch?v=QohH89Eu5iM"
+    "videoLinks": [
+    { "type": "mp4", "url": "https://www.dropbox.com/s/abcd1234/myvideo.mp4?raw=1" },
+    { "type": "youtube", "id": "QohH89Eu5iM" },
+    { "type": "gdrive", "id": "FILE_ID" }
+  ]
   }
 ]
