@@ -25,5 +25,5 @@
     "image": "img/product3.jpg",
     "images": ["img/product3.jpg", "img/product4.jpg"],
     "video": "video/product3.mp4"
-  },
+  }
 ]
