@@ -24,6 +24,6 @@
     "price": "$190.99",
     "image": "img/product3.jpg",
     "images": ["img/product3.jpg", "img/product4.jpg"],
-    "video": "video/product3.mp4"
+    "video": "https://www.youtube.com/watch?v=QohH89Eu5iM"
   }
 ]
