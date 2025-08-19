@@ -6,8 +6,9 @@
     "price": "$19.99",
     "image": "img/product1.jpg",
     "images": ["img/product1_alt1.jpg", "img/product1_alt2.jpg"],
-    "video": "video/product1.mp4",
-    "videoLinks": []
+    "videoLinks": [
+      { "type": "mp4", "url": "video/product1.mp4" }
+    ]
   },
   {
     "id": 2,
@@ -16,8 +17,9 @@
     "price": "$139.99",
     "image": "img/product2.jpg",
     "images": ["img/product2_alt1.jpg", "img/product2_alt2.jpg"],
-    "video": "video/product2.mp4",
-    "videoLinks": []
+    "videoLinks": [
+      { "type": "mp4", "url": "video/product2.mp4" }
+    ]
   },
   {
     "id": 3,
@@ -26,11 +28,10 @@
     "price": "$190.99",
     "image": "img/product3.jpg",
     "images": ["img/product3.jpg", "img/product4.jpg"],
-    "video": "video/product1.mp4",
     "videoLinks": [
-    { "type": "mp4", "url": "https://www.dropbox.com/s/abcd1234/myvideo.mp4?raw=1" },
-    { "type": "youtube", "id": "QohH89Eu5iM" },
-    { "type": "gdrive", "id": "FILE_ID" }
-  ]
+      { "type": "mp4", "url": "https://www.dropbox.com/s/abcd1234/myvideo.mp4?raw=1" },
+      { "type": "youtube", "id": "QohH89Eu5iM" },
+      { "type": "gdrive", "id": "FILE_ID" }
+    ]
   }
 ]
