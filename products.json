@@ -4,7 +4,7 @@
     "name": "Product 1",
     "description": "This is a detailed description of Product 1.",
     "price": "$19.99",
-    "image": "img/product1.jpg",
+    "image": "https://sir3d.github.io/SiR3d/img/product1.jpg",
     "images": ["img/logo.png"],
     "videoLinks": [
       { "type": "mp4", "url": "video/product1.mp4" }
@@ -15,7 +15,7 @@
     "name": "Product 2",
     "description": "This is a detailed description of Product 2.",
     "price": "$139.99",
-    "image": "img/product2.jpg",
+    "image": "https://sir3d.github.io/SiR3d/img/product1.jpg",
     "images": [],
     "videoLinks": []
   },
@@ -24,8 +24,8 @@
     "name": "Product 3",
     "description": "This is a detailed description of Product 3.",
     "price": "$190.99",
-    "image": "img/product3.jpg",
-    "images": ["img/product3.jpg", "img/product4.jpg"],
+    "image": "https://sir3d.github.io/SiR3d/img/product3.jpg",
+    "images": ["https://sir3d.github.io/SiR3d/img/product3.jpg", "https://sir3d.github.io/SiR3d/img/product4.jpg"],
     "videoLinks": [
       { "type": "mp4", "url": "https://www.dropbox.com/s/abcd1234/myvideo.mp4?raw=1" },
       { "type": "youtube", "id": "QohH89Eu5iM" },
